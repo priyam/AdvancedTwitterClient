@@ -21,7 +21,7 @@ import org.apache.http.Header;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class HomeTimelineFragment extends TweetsListFragment implements TimelineActivity.OnTweetPostedListener{
+public class HomeTimelineFragment extends TweetsListFragment{
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup parent, @Nullable Bundle savedInstanceState) {
         View v = super.onCreateView(inflater, parent, savedInstanceState);
@@ -90,9 +90,7 @@ public class HomeTimelineFragment extends TweetsListFragment implements Timeline
         }
     }
 
-
-    @Override
-    public void onTweetPosted(Tweet t) {
+    public void AddTweetOnTimeline(Tweet t) {
         populateTimeline(t);
     }
 }

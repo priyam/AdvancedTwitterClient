@@ -32,11 +32,10 @@ import java.util.List;
 
 public class TimelineActivity extends ActionBarActivity implements ComposeTweetDialog.OnTweetPostListener  {
 
-    private TweetsListFragment fragmentTweetsList;
+    private HomeTimelineFragment fragmentHomeTimeline;
     private ComposeTweetDialog composeTweetDialog;
     private User currentUser;
     private TwitterClient client;
-    private OnTweetPostedListener listener;
 
     // Define the events that the fragment will use to communicate
     public interface OnTweetPostedListener {
@@ -127,8 +126,7 @@ public class TimelineActivity extends ActionBarActivity implements ComposeTweetD
                 Log.d("DEBUG", json.toString());
 
                 Tweet t = Tweet.fromJSON(json);
-               //FIRE EVENT THAT FRAGMENT IMPLEMENTS
-                listener.onTweetPosted(t);
+                fragmentHomeTimeline.AddTweetOnTimeline(t);
                 composeTweetDialog.dismiss();
             }
 
@@ -151,15 +149,8 @@ public class TimelineActivity extends ActionBarActivity implements ComposeTweetD
         @Override
         public Fragment getItem(int position) {
             if (position == 0){
-                HomeTimelineFragment fragmentHome = new HomeTimelineFragment();
-                if(fragmentHome instanceof OnTweetPostedListener){
-                    listener = (OnTweetPostedListener)fragmentHome;
-                }
-                else {
-                    throw new ClassCastException(fragmentHome.toString()
-                            + " must implement OnTweetPostedListener");
-                }
-                return fragmentHome;
+                fragmentHomeTimeline = new HomeTimelineFragment();
+                return fragmentHomeTimeline;
             } else if(position == 1){
                 return new MentionsTimelineFragment();
             } else{
