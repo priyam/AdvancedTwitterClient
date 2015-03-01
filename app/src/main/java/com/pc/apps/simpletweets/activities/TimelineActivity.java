@@ -22,18 +22,26 @@ import com.pc.apps.simpletweets.adapters.TweetsArrayAdapter;
 import com.pc.apps.simpletweets.fragments.HomeTimelineFragment;
 import com.pc.apps.simpletweets.fragments.MentionsTimelineFragment;
 import com.pc.apps.simpletweets.fragments.TweetsListFragment;
+import com.pc.apps.simpletweets.models.Tweet;
 import com.pc.apps.simpletweets.models.User;
 import org.apache.http.Header;
 import org.json.JSONObject;
 
+import java.util.List;
 
-public class TimelineActivity extends ActionBarActivity implements ComposeTweetDialog.OnTweetPostListener {
+
+public class TimelineActivity extends ActionBarActivity implements ComposeTweetDialog.OnTweetPostListener  {
 
     private TweetsListFragment fragmentTweetsList;
     private ComposeTweetDialog composeTweetDialog;
     private User currentUser;
     private TwitterClient client;
+    private OnTweetPostedListener listener;
 
+    // Define the events that the fragment will use to communicate
+    public interface OnTweetPostedListener {
+        public void onTweetPosted(Tweet t);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,9 +98,9 @@ public class TimelineActivity extends ActionBarActivity implements ComposeTweetD
 
     public void onComposeTweetAction(MenuItem item) {
 
-//        FragmentManager fm = getSupportFragmentManager();
-//        composeTweetDialog = ComposeTweetDialog.newInstance(currentUser);
-//        composeTweetDialog.show(fm,"fragment_compose_tweet");
+        FragmentManager fm = getSupportFragmentManager();
+       composeTweetDialog = ComposeTweetDialog.newInstance(currentUser);
+       composeTweetDialog.show(fm,"fragment_compose_tweet");
 
     }
     private void getLoggedInUser() {
@@ -112,22 +120,15 @@ public class TimelineActivity extends ActionBarActivity implements ComposeTweetD
 
     @Override
     public void onTweetPostClicked(String text) {
-
-        /*client.postTweet(new JsonHttpResponseHandler() {
+        client.postTweet(new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject json)  {
 
                 Log.d("DEBUG", json.toString());
 
                 Tweet t = Tweet.fromJSON(json);
-//                ArrayList<Tweet> updatedTweets = new ArrayList<>();
-//                updatedTweets.add(t);
-//                updatedTweets.addAll((ArrayList<Tweet>)tweets.clone());
-//                aTweets.clear();
-//                tweets = updatedTweets;
-//                aTweets.notifyDataSetChanged();
-//                Tweet.setMaxId(Long.MAX_VALUE);
-                populateTimeline(t);
+               //FIRE EVENT THAT FRAGMENT IMPLEMENTS
+                listener.onTweetPosted(t);
                 composeTweetDialog.dismiss();
             }
 
@@ -135,9 +136,9 @@ public class TimelineActivity extends ActionBarActivity implements ComposeTweetD
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 Toast.makeText(getParent().getApplicationContext(), "Error occurred - couldnt post tweet", Toast.LENGTH_SHORT).show();
             }
-        } , text);*/
-
+        } , text);
     }
+
 
     //Return the order of the fragments in the view pager
     public class TweetsPagerAdapter extends FragmentPagerAdapter{
@@ -150,7 +151,15 @@ public class TimelineActivity extends ActionBarActivity implements ComposeTweetD
         @Override
         public Fragment getItem(int position) {
             if (position == 0){
-                return new HomeTimelineFragment();
+                HomeTimelineFragment fragmentHome = new HomeTimelineFragment();
+                if(fragmentHome instanceof OnTweetPostedListener){
+                    listener = (OnTweetPostedListener)fragmentHome;
+                }
+                else {
+                    throw new ClassCastException(fragmentHome.toString()
+                            + " must implement OnTweetPostedListener");
+                }
+                return fragmentHome;
             } else if(position == 1){
                 return new MentionsTimelineFragment();
             } else{

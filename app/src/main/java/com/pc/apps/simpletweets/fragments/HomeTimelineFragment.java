@@ -7,11 +7,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.pc.apps.simpletweets.TwitterApplication;
 import com.pc.apps.simpletweets.Utilities.EndlessScrollListener;
 import com.pc.apps.simpletweets.Utilities.TwitterClient;
+import com.pc.apps.simpletweets.activities.TimelineActivity;
 import com.pc.apps.simpletweets.models.Tweet;
 import com.pc.apps.simpletweets.models.User;
 
@@ -19,9 +21,7 @@ import org.apache.http.Header;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class HomeTimelineFragment extends TweetsListFragment {
-
-    private TwitterClient client;
+public class HomeTimelineFragment extends TweetsListFragment implements TimelineActivity.OnTweetPostedListener{
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup parent, @Nullable Bundle savedInstanceState) {
         View v = super.onCreateView(inflater, parent, savedInstanceState);
@@ -61,7 +61,6 @@ public class HomeTimelineFragment extends TweetsListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        client = TwitterApplication.getRestClient();
         populateTimeline(null);
 
     }
@@ -92,5 +91,8 @@ public class HomeTimelineFragment extends TweetsListFragment {
     }
 
 
-
+    @Override
+    public void onTweetPosted(Tweet t) {
+        populateTimeline(t);
+    }
 }

@@ -10,26 +10,34 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import com.loopj.android.http.JsonHttpResponseHandler;
 import com.pc.apps.simpletweets.R;
+import com.pc.apps.simpletweets.TwitterApplication;
 import com.pc.apps.simpletweets.Utilities.EndlessScrollListener;
+import com.pc.apps.simpletweets.Utilities.TwitterClient;
 import com.pc.apps.simpletweets.activities.ComposeTweetDialog;
 import com.pc.apps.simpletweets.activities.TimelineActivity;
 import com.pc.apps.simpletweets.adapters.TweetsArrayAdapter;
 import com.pc.apps.simpletweets.models.Tweet;
+import android.util.Log;
 import com.pc.apps.simpletweets.models.User;
+
+import org.apache.http.Header;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TweetsListFragment extends Fragment {
+public class TweetsListFragment extends Fragment  {
 
     protected ArrayList<Tweet> tweets;
     protected TweetsArrayAdapter aTweets;
     protected ListView lvTweets;
     protected SwipeRefreshLayout swipeContainer;
     protected long MAX_ID = Long.MAX_VALUE;
-
+    protected TwitterClient client;
     //inflation logic
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup parent, @Nullable Bundle savedInstanceState) {
@@ -73,6 +81,7 @@ public class TweetsListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         tweets = new ArrayList<>();
         aTweets = new TweetsArrayAdapter(getActivity(), tweets);
+        client = TwitterApplication.getRestClient();
     }
 
 }
