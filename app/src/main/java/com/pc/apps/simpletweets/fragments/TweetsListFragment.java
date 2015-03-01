@@ -28,6 +28,7 @@ public class TweetsListFragment extends Fragment {
     protected TweetsArrayAdapter aTweets;
     protected ListView lvTweets;
     protected SwipeRefreshLayout swipeContainer;
+    protected long MAX_ID = Long.MAX_VALUE;
 
     //inflation logic
     @Override
@@ -41,7 +42,28 @@ public class TweetsListFragment extends Fragment {
     }
 
     public void addAll(List<Tweet> tweets){
+        setMaxID(tweets);
         aTweets.addAll(tweets);
+    }
+
+    private void setMaxID(List<Tweet> tweets) {
+        if(tweets != null && !tweets.isEmpty()){
+            long mininumId= getMininumId(tweets);
+            if(mininumId < MAX_ID ){
+                MAX_ID = mininumId;
+            }
+        }
+    }
+
+    private long getMininumId(List<Tweet> tweets) {
+        long min = tweets.get(0).getUid();
+        for (int i = 1; i < tweets.size(); i++){
+            long tweetId = tweets.get(i).getUid();
+            if(min > tweetId){
+                min = tweetId;
+            }
+        }
+        return min;
     }
 
     //creation lifecycle even

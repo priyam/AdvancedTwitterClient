@@ -27,26 +27,6 @@ public class Tweet implements Parcelable {
     private User user;
     private String createdAt;
 
-    private static long homeTimelineMaxId = Long.MAX_VALUE;
-
-    private static long mentionsTimelineMaxId = Long.MAX_VALUE;
-
-    public static long getMentionsTimelineMaxId() {
-        return mentionsTimelineMaxId;
-    }
-
-    public static void setMentionsTimelineMaxId(long mentionsTimelineMaxId) {
-        Tweet.mentionsTimelineMaxId = mentionsTimelineMaxId;
-    }
-
-    public static long getHomeTimelineMaxId(){
-        return homeTimelineMaxId;
-    }
-
-    public static void setHomeTimelineMaxId(long value){
-        homeTimelineMaxId = value;
-    }
-
     public String getBody() {
         return body;
     }
@@ -103,9 +83,6 @@ public class Tweet implements Parcelable {
         try {
             tweet.body = jsonObject.getString("text");
             tweet.uid = jsonObject.getLong("id");
-            if(homeTimelineMaxId > tweet.uid){
-                homeTimelineMaxId = tweet.uid;
-            }
             tweet.createdAt = jsonObject.getString("created_at");
             tweet.user = User.fromJSON(jsonObject.getJSONObject("user"));
         } catch (JSONException e) {

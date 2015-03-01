@@ -23,7 +23,6 @@ public class HomeTimelineFragment extends TweetsListFragment {
 
     private TwitterClient client;
 
-    @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup parent, @Nullable Bundle savedInstanceState) {
         View v = super.onCreateView(inflater, parent, savedInstanceState);
 
@@ -35,7 +34,7 @@ public class HomeTimelineFragment extends TweetsListFragment {
                 // Make sure you call swipeContainer.setRefreshing(false)
                 // once the network request has completed successfully.
                 aTweets.clear();
-                Tweet.setHomeTimelineMaxId(Long.MAX_VALUE);
+                MAX_ID = Long.MAX_VALUE;
                 populateTimeline(null);
                 swipeContainer.setRefreshing(false);
             }
@@ -71,7 +70,6 @@ public class HomeTimelineFragment extends TweetsListFragment {
     // Fill the listview by creating the tweet objects from json
     public void populateTimeline(Tweet t) {
         if (t == null) {
-            final long maxId = Tweet.getHomeTimelineMaxId();
             client.getHomeTimeline(new JsonHttpResponseHandler() {
                 //Success
                 @Override
@@ -87,7 +85,7 @@ public class HomeTimelineFragment extends TweetsListFragment {
                 public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                     Log.d("DEBUG", errorResponse.toString());
                 }
-            }, maxId == Long.MAX_VALUE ? Long.MAX_VALUE : maxId - 1);
+            }, MAX_ID == Long.MAX_VALUE ? Long.MAX_VALUE : MAX_ID - 1);
         } else {
             aTweets.insert(t, 0);
         }

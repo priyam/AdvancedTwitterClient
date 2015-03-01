@@ -35,7 +35,7 @@ public class MentionsTimelineFragment extends TweetsListFragment {
                 // Make sure you call swipeContainer.setRefreshing(false)
                 // once the network request has completed successfully.
                 aTweets.clear();
-                Tweet.setMentionsTimelineMaxId(Long.MAX_VALUE);
+                MAX_ID = Long.MAX_VALUE;
                 populateTimeline(null);
                 swipeContainer.setRefreshing(false);
             }
@@ -46,7 +46,7 @@ public class MentionsTimelineFragment extends TweetsListFragment {
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
         // Attach the listener to the AdapterView onCreate
-        /*lvTweets.setOnScrollListener(new EndlessScrollListener(3) {
+        lvTweets.setOnScrollListener(new EndlessScrollListener(3) {
             @Override
             public void onLoadMore(int page, int totalItemsCount) {
                 // Triggered only when new data needs to be appended to the list
@@ -54,7 +54,7 @@ public class MentionsTimelineFragment extends TweetsListFragment {
                 populateTimeline(null);
                 // or customLoadMoreDataFromApi(totalItemsCount);
             }
-        });*/
+        });
         return v;
     }
 
@@ -70,26 +70,19 @@ public class MentionsTimelineFragment extends TweetsListFragment {
     // Fill the listview by creating the tweet objects from json
     public void populateTimeline(Tweet t) {
         if (t == null) {
-            final long maxId = Tweet.getMentionsTimelineMaxId();
             client.getMentionsTimeline(new JsonHttpResponseHandler() {
                 //Success
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONArray json) {
                     Log.d("DEBUG", json.toString());
-
-                    ArrayList<Tweet> moreTweets = Tweet.fromJSONArray(json);
-                    if(maxId != Tweet.getMentionsTimelineMaxId()){
-                        Log.d("DEBUG", "maxId is not same as new max");
-                        addAll(moreTweets);
-                    }
+                    addAll(Tweet.fromJSONArray(json));
                 }
-
                 //Failure
                 @Override
                 public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                     Log.d("DEBUG", errorResponse.toString());
                 }
-            }, maxId == Long.MAX_VALUE ? Long.MAX_VALUE : maxId - 1);
+            }, MAX_ID == Long.MAX_VALUE ? Long.MAX_VALUE : MAX_ID - 1);
         } else {
             aTweets.insert(t, 0);
         }
