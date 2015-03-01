@@ -1,6 +1,7 @@
 package com.pc.apps.simpletweets.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.pc.apps.simpletweets.R;
+import com.pc.apps.simpletweets.activities.ProfileActivity;
 import com.pc.apps.simpletweets.models.Tweet;
 import com.squareup.picasso.Picasso;
 
@@ -33,14 +35,13 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet>{
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // 1. Get the tweet
-        Tweet tweet = getItem(position);
+        final Tweet tweet = getItem(position);
         ViewHolder viewHolder;
         //2. find or inflate the template
         if(convertView == null) {
             viewHolder = new ViewHolder();
             LayoutInflater inflater = LayoutInflater.from(getContext());
             //3. Find subviews to fill with data in the template
-
             convertView = inflater.inflate(R.layout.item_tweet, parent, false);
             viewHolder.ivProfileImage = (ImageView) convertView.findViewById(R.id.ivProfileImage);
             viewHolder.tvUserName = (TextView) convertView.findViewById(R.id.tvUserName);
@@ -59,6 +60,16 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet>{
         viewHolder.tvUserName.setText(tweet.getUser().getName());
         viewHolder.tvUserScreenName.setText(tweet.getUser().getScreenName());
         viewHolder.tvCreatedAtTime.setText(tweet.getCreatedAtPrettyTime());
+
+        viewHolder.ivProfileImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(v.getContext(), ProfileActivity.class);
+                i.putExtra("user", tweet.getUser());
+                getContext().startActivity(i);
+            }
+        });
+
         //5. return the view to be inserted into the list
         return convertView;
     }

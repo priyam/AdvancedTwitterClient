@@ -13,7 +13,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
-
 import com.astuetz.PagerSlidingTabStrip;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.pc.apps.simpletweets.R;
@@ -24,12 +23,8 @@ import com.pc.apps.simpletweets.fragments.HomeTimelineFragment;
 import com.pc.apps.simpletweets.fragments.MentionsTimelineFragment;
 import com.pc.apps.simpletweets.fragments.TweetsListFragment;
 import com.pc.apps.simpletweets.models.User;
-
-
 import org.apache.http.Header;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
 
 
 public class TimelineActivity extends ActionBarActivity implements ComposeTweetDialog.OnTweetPostListener {
@@ -60,7 +55,6 @@ public class TimelineActivity extends ActionBarActivity implements ComposeTweetD
         tabStrip.setViewPager(vpPager);
         client = TwitterApplication.getRestClient();
         getLoggedInUser();
-
 
     }
 
@@ -93,35 +87,6 @@ public class TimelineActivity extends ActionBarActivity implements ComposeTweetD
         startActivity(i);
     }
 
-    //Return the order of the fragments in the view pager
-    public class TweetsPagerAdapter extends FragmentPagerAdapter{
-        private String tabTitles[] = {"Home","Mentions"};
-
-        public TweetsPagerAdapter(FragmentManager fm){
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            if (position == 0){
-                return new HomeTimelineFragment();
-            } else if(position == 1){
-                return new MentionsTimelineFragment();
-            } else{
-                return null;
-            }
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return tabTitles[position];
-        }
-
-        @Override
-        public int getCount() {
-            return tabTitles.length;
-        }
-    }
 
     public void onComposeTweetAction(MenuItem item) {
 
@@ -173,5 +138,36 @@ public class TimelineActivity extends ActionBarActivity implements ComposeTweetD
         } , text);*/
 
     }
+
+    //Return the order of the fragments in the view pager
+    public class TweetsPagerAdapter extends FragmentPagerAdapter{
+        private String tabTitles[] = {"Home","Mentions"};
+
+        public TweetsPagerAdapter(FragmentManager fm){
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            if (position == 0){
+                return new HomeTimelineFragment();
+            } else if(position == 1){
+                return new MentionsTimelineFragment();
+            } else{
+                return null;
+            }
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return tabTitles[position];
+        }
+
+        @Override
+        public int getCount() {
+            return tabTitles.length;
+        }
+    }
+
 
 }
