@@ -22,8 +22,6 @@ New stories added for this Assignment:
  * [x] Advanced(Optional): Robust error handling, check if internet is available, handle error cases, network failures
  * [x] Advanced(Optional): Improve the user interface and theme the app to feel twitter branded
 
-Advanced: Robust error handling, check if internet is available, handle error cases, network failures
-
 Stories From Previous Assignment:
  * [x] Required: User can sign in to Twitter using OAuth login
  * [x] Required: User can view the tweets from their home timeline
