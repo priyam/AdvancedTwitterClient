@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.pc.apps.simpletweets.R;
+import com.pc.apps.simpletweets.Utilities.Utils;
 import com.pc.apps.simpletweets.activities.ProfileActivity;
 import com.pc.apps.simpletweets.models.Tweet;
 import com.squareup.picasso.Picasso;
@@ -55,17 +56,17 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet>{
 
         //4. populate data into subviews
         viewHolder.ivProfileImage.setImageResource(0);
-        Picasso.with(getContext()).load(tweet.getUser().getProfileImageUrl()).into(viewHolder.ivProfileImage);
-        viewHolder.tvBody.setText(tweet.getBody());
-        viewHolder.tvUserName.setText(tweet.getUser().getName());
-        viewHolder.tvUserScreenName.setText(tweet.getUser().getScreenName());
-        viewHolder.tvCreatedAtTime.setText(tweet.getCreatedAtPrettyTime());
+        Picasso.with(getContext()).load(tweet.user.profileImageUrl).into(viewHolder.ivProfileImage);
+        viewHolder.tvBody.setText(tweet.body);
+        viewHolder.tvUserName.setText(tweet.user.name);
+        viewHolder.tvUserScreenName.setText(tweet.user.screenName);
+        viewHolder.tvCreatedAtTime.setText(Utils.getCreatedAtPrettyTime(tweet.createdAt));
 
         viewHolder.ivProfileImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(v.getContext(), ProfileActivity.class);
-                i.putExtra("user", tweet.getUser());
+                i.putExtra("user", tweet.user);
                 getContext().startActivity(i);
             }
         });

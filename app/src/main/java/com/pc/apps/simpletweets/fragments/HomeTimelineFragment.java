@@ -59,35 +59,8 @@ public class HomeTimelineFragment extends TweetsListFragment{
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        populateTimeline(null);
-
-    }
-
-    //Send an API request to get the timeline json
-    // Fill the listview by creating the tweet objects from json
-    public void populateTimeline(Tweet t) {
-        if (t == null) {
-            client.getHomeTimeline(new JsonHttpResponseHandler() {
-                //Success
-                @Override
-                public void onSuccess(int statusCode, Header[] headers, JSONArray json) {
-                    Log.d("DEBUG", json.toString());
-                    //if(maxId != Tweet.getHomeTimelineMaxId()) {
-                        addAll(Tweet.fromJSONArray(json));
-                    //}
-                }
-
-                //Failure
-                @Override
-                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                    Log.d("DEBUG", errorResponse.toString());
-                }
-            }, MAX_ID == Long.MAX_VALUE ? Long.MAX_VALUE : MAX_ID - 1);
-        } else {
-            aTweets.insert(t, 0);
-        }
+    public void makeNetworkApiRequest() {
+        client.getHomeTimeline(handler, MAX_ID == Long.MAX_VALUE ? Long.MAX_VALUE : MAX_ID - 1);
     }
 
     public void AddTweetOnTimeline(Tweet t) {

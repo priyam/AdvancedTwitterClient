@@ -14,14 +14,16 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class UserTimelineFragment extends TweetsListFragment{
-    private TwitterClient client;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        populateTimeline(null);
+    }
 
-        client = TwitterApplication.getRestClient();
-        populateTimeline();
+    @Override
+    public void makeNetworkApiRequest() {
+        String screenName = getArguments().getString("screen_name");
+        client.getUserTimeline(screenName, handler);
     }
 
     public static UserTimelineFragment newInstance(String screenName) {
@@ -32,23 +34,4 @@ public class UserTimelineFragment extends TweetsListFragment{
         return userFragment;
     }
 
-    //Send an API request to get the timeline json
-    // Fill the listview by creating the tweet objects from json
-    public void populateTimeline() {
-        String screenName = getArguments().getString("screen_name");
-        client.getUserTimeline(screenName, new JsonHttpResponseHandler() {
-                //Success
-                @Override
-                public void onSuccess(int statusCode, Header[] headers, JSONArray json) {
-                    Log.d("DEBUG", json.toString());
-                    addAll(Tweet.fromJSONArray(json));
-                }
-
-                //Failure
-                @Override
-                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                    Log.d("DEBUG", errorResponse.toString());
-                }
-        });
-    }
 }

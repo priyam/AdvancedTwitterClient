@@ -3,76 +3,33 @@ package com.pc.apps.simpletweets.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.pc.apps.simpletweets.activities.TimelineActivity;
+import com.activeandroid.Model;
+import com.activeandroid.annotation.Column;
+import com.activeandroid.annotation.Column.ForeignKeyAction;
+import com.activeandroid.annotation.Table;
+import com.activeandroid.query.Select;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.ocpsoft.prettytime.PrettyTime;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
 
 //Parse the json + Store the data, encapsulate  state logic or display logic
-public class Tweet implements Parcelable {
+@Table(name = "Tweet")
+public class Tweet extends Model implements Parcelable {
 
-    private final String TwitterDateFormat="EEE MMM dd HH:mm:ss ZZZZZ yyyy";
+    @Column(name = "remoteId", index=true, unique = true, onUniqueConflict = Column.ConflictAction.REPLACE)
+    public long uid;//unique id for the tweet
 
-    //list out the attributes
-    private String body;
-    private long uid;//unique id for the tweet
-    private User user;
-    private String createdAt;
+    @Column(name = "body")
+    public String body;
 
-    public String getBody() {
-        return body;
-    }
+    @Column(name = "User", onUpdate = ForeignKeyAction.CASCADE, onDelete = ForeignKeyAction.CASCADE)
+    public User user;
 
-    public long getUid() {
-        return uid;
-    }
+    @Column(name = "createdAt")
+    public String createdAt;
 
-    public String getCreatedAt() {
-        return createdAt;
-    }
-    public String getCreatedAtPrettyTime() {
-        SimpleDateFormat sf = new SimpleDateFormat(TwitterDateFormat, Locale.US);
-        sf.setLenient(true);
-        try {
-            Date now = new Date();
-            Date date = sf.parse(createdAt);
-            PrettyTime p = new PrettyTime();
-            String sDate = p.format(date);
-            long diffInSeconds = (now.getTime() - date.getTime())/1000;
-
-        return sDate.replace("moments ago", (diffInSeconds < 60? diffInSeconds + "s" : diffInSeconds/60 + "m")).
-                    replace(" minute ago", "m").
-                    replace(" minutes ago", "m").
-                    replace(" hour ago", "h").
-                    replace(" hours ago", "h").
-                    replace(" day ago", "d").
-                    replace(" days ago", "d").
-                    replace("week ago", "w").
-                    replace("weeks ago", "w").
-                    replace("month ago", "mo").
-                    replace("months ago", "mo").
-                    replace("year ago", "y").
-                    replace("years ago", "y").
-                    replace(" moments from now", "0s")
-                ;
-
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return createdAt;
-        }
-    }
-
-    public User getUser() {
-        return user;
-    }
 
     //Deserialize the JSON
     //Tweet.fromJSON("{...}") ==> <Tweet>
@@ -85,14 +42,19 @@ public class Tweet implements Parcelable {
             tweet.uid = jsonObject.getLong("id");
             tweet.createdAt = jsonObject.getString("created_at");
             tweet.user = User.fromJSON(jsonObject.getJSONObject("user"));
+            //Persist in DB
+
+            Tweet tweetExists = new Select().from(Tweet.class).where("remoteId = ?",tweet.uid).executeSingle();
+            if(tweetExists == null){
+                tweet.save();
+            }
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
         //return the tweet object
         return tweet;
     }
-
-
 
     public static ArrayList<Tweet> fromJSONArray(JSONArray jsonArray) {
         ArrayList<Tweet> tweets = new ArrayList<>();
@@ -124,6 +86,7 @@ public class Tweet implements Parcelable {
     }
 
     public Tweet() {
+        user = new User();
     }
 
     private Tweet(Parcel in) {

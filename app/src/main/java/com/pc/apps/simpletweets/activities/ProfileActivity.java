@@ -45,7 +45,7 @@ public class ProfileActivity extends ActionBarActivity {
         currentUser  = (User) getIntent().getParcelableExtra("user");
         String screenName = null;
         if(currentUser != null ){
-            screenName = currentUser.getScreenName();
+            screenName = currentUser.screenName;
             getSupportActionBar().setTitle(currentUser.getScreenName());
             populateProfileHeader(currentUser);
         }
@@ -66,11 +66,11 @@ public class ProfileActivity extends ActionBarActivity {
         TextView tvFollowers = (TextView) findViewById(R.id.tvFollowers);
         TextView tvFollowing = (TextView) findViewById(R.id.tvFollowing);
         ImageView ivProfileImage = (ImageView) findViewById(R.id.ivProfileImage);
-        tvName.setText(user.getName());
-        tvTagline.setText(user.getTagLine());
-        tvFollowers.setText(user.getFollowers() + " Followers");
-        tvFollowing.setText(user.getFollowing() + " Following");
-        Picasso.with(this).load(user.getProfileImageUrl()).into(ivProfileImage);
+        tvName.setText(user.name);
+        tvTagline.setText(user.description);
+        tvFollowers.setText(user.followers + " Followers");
+        tvFollowing.setText(user.following + " Following");
+        Picasso.with(this).load(user.profileImageUrl).into(ivProfileImage);
 
     }
 

@@ -88,8 +88,8 @@ public class ComposeTweetDialog extends DialogFragment {
 
         User user = (User) getArguments().getParcelable("user");
         if(user !=null){
-            Picasso.with(dialog.getContext()).load(user.getProfileImageUrl()).into(ivUserPic);
-            tvUserName.setText(user.getName());
+            Picasso.with(dialog.getContext()).load(user.profileImageUrl).into(ivUserPic);
+            tvUserName.setText(user.name);
             tvUserScreenName.setText(user.getScreenName());
         }
         // retrieve display dimensions

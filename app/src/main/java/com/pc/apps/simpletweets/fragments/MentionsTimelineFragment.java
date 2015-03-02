@@ -21,9 +21,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 public class MentionsTimelineFragment extends TweetsListFragment {
-
-    private TwitterClient client;
-
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup parent, @Nullable Bundle savedInstanceState) {
         View v = super.onCreateView(inflater, parent, savedInstanceState);
@@ -59,33 +56,7 @@ public class MentionsTimelineFragment extends TweetsListFragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        client = TwitterApplication.getRestClient();
-        populateTimeline(null);
+    public void makeNetworkApiRequest() {
+        client.getMentionsTimeline(handler, MAX_ID == Long.MAX_VALUE ? Long.MAX_VALUE : MAX_ID - 1);
     }
-
-    //Send an API request to get the timeline json
-    // Fill the listview by creating the tweet objects from json
-    public void populateTimeline(Tweet t) {
-        if (t == null) {
-            client.getMentionsTimeline(new JsonHttpResponseHandler() {
-                //Success
-                @Override
-                public void onSuccess(int statusCode, Header[] headers, JSONArray json) {
-                    Log.d("DEBUG", json.toString());
-                    addAll(Tweet.fromJSONArray(json));
-                }
-                //Failure
-                @Override
-                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                    Log.d("DEBUG", errorResponse.toString());
-                }
-            }, MAX_ID == Long.MAX_VALUE ? Long.MAX_VALUE : MAX_ID - 1);
-        } else {
-            aTweets.insert(t, 0);
-        }
-    }
-
 }

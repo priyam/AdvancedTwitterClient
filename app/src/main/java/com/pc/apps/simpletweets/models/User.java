@@ -3,83 +3,60 @@ package com.pc.apps.simpletweets.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.activeandroid.Model;
+import com.activeandroid.annotation.Column;
+import com.activeandroid.annotation.Table;
+import com.activeandroid.query.Select;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class User implements Parcelable {
+@Table(name = "User")
+public class User extends Model implements Parcelable {
     //list the attributes
-    private String name;
-    private long uid;
-    private String screenName;
-    private String profileImageUrl;
-    private String description;
-    private int followers;
-    private int following;
 
-    public int getTweetsCount() {
-        return tweetsCount;
-    }
-
-    public void setTweetsCount(int tweetsCount) {
-        this.tweetsCount = tweetsCount;
-    }
-
-    private int tweetsCount;
-
-    public int getFollowing() {
-        return following;
-    }
-
-    public void setFollowing(int following) {
-        this.following = following;
-    }
-
-    public int getFollowers() {
-        return followers;
-    }
-
-    public void setFollowers(int followers) {
-        this.followers = followers;
-    }
-
-    public String getTagLine() {
-        return description;
-    }
-
-    public void setTagLine(String description) {
-        this.description = description;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public long getUid() {
-        return uid;
-    }
+    @Column( name = "screenName", index=true , unique = true, onUniqueConflict = Column.ConflictAction.REPLACE)
+    public String screenName;
+    @Column( name = "name")
+    public String name;
+    @Column( name = "uid")
+    public long uid;
+    @Column( name = "profileImageUrl")
+    public String profileImageUrl;
+    @Column( name = "description")
+    public String description;
+    @Column( name = "followers")
+    public int followers;
+    @Column( name = "following")
+    public int following;
+    @Column( name = "tweetsCount")
+    public int tweetsCount;
+    @Column(name = "bannerImageURL")
+    public String bannerImageURL;
 
     public String getScreenName() {
         return "@" + screenName;
-    }
-
-    public String getProfileImageUrl() {
-        return profileImageUrl;
     }
 
     //deserialize the user json => User
     public static User fromJSON(JSONObject jsonObject){
         User user = new User();
         try {
+            user.screenName = jsonObject.getString("screen_name");
             user.name = jsonObject.getString("name");
             user.uid = jsonObject.getLong("id");
-            user.screenName = jsonObject.getString("screen_name");
-            user.profileImageUrl = jsonObject.optString("profile_image_url");
+            user.profileImageUrl = jsonObject.optString("profile_image_url").replace("_normal", "_bigger");;
+            user.bannerImageURL = jsonObject.optString("profile_banner_url");
             user.description = jsonObject.optString("description");
             user.followers = jsonObject.optInt("followers_count");
             user.following = jsonObject.optInt("following");
             user.tweetsCount = jsonObject.optInt("statuses_count");
         } catch (JSONException e) {
             e.printStackTrace();
+        }
+        User userExists = new Select().from(User.class).where("screenName = ?",user.screenName).executeSingle();
+        if(userExists == null){
+            user.save();
         }
         return user;
     }
@@ -91,10 +68,11 @@ public class User implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.screenName);
         dest.writeString(this.name);
         dest.writeLong(this.uid);
-        dest.writeString(this.screenName);
         dest.writeString(this.profileImageUrl);
+        dest.writeString(this.bannerImageURL);
         dest.writeString(this.description);
         dest.writeInt(this.followers);
         dest.writeInt(this.following);
@@ -105,10 +83,11 @@ public class User implements Parcelable {
     }
 
     private User(Parcel in) {
+        this.screenName = in.readString();
         this.name = in.readString();
         this.uid = in.readLong();
-        this.screenName = in.readString();
         this.profileImageUrl = in.readString();
+        this.bannerImageURL = in.readString();
         this.description = in.readString();
         this.followers = in.readInt();
         this.following = in.readInt();
