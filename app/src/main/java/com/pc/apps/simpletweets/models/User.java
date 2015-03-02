@@ -46,7 +46,7 @@ public class User extends Model implements Parcelable {
             user.name = jsonObject.getString("name");
             user.uid = jsonObject.getLong("id");
             user.profileImageUrl = jsonObject.optString("profile_image_url").replace("_normal", "_bigger");;
-            user.bannerImageURL = jsonObject.optString("profile_banner_url");
+            user.bannerImageURL = jsonObject.optString("profile_background_image_url");
             user.description = jsonObject.optString("description");
             user.followers = jsonObject.optInt("followers_count");
             user.following = jsonObject.optInt("following");

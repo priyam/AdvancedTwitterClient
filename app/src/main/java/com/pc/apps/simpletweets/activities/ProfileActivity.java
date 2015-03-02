@@ -8,6 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -46,7 +47,7 @@ public class ProfileActivity extends ActionBarActivity {
         String screenName = null;
         if(currentUser != null ){
             screenName = currentUser.screenName;
-            getSupportActionBar().setTitle(currentUser.getScreenName());
+            getSupportActionBar().setTitle("Profile " + currentUser.getScreenName());
             populateProfileHeader(currentUser);
         }
         //Create the user timeline fragment
@@ -71,7 +72,8 @@ public class ProfileActivity extends ActionBarActivity {
         tvFollowers.setText(user.followers + " Followers");
         tvFollowing.setText(user.following + " Following");
         Picasso.with(this).load(user.profileImageUrl).into(ivProfileImage);
-
+        ImageView ivBackGroundImageView = (ImageView) findViewById(R.id.ivBackGroundImageView);
+        Picasso.with(this).load(user.bannerImageURL).fit().into(ivBackGroundImageView);
     }
 
     @Override
