@@ -18,6 +18,7 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.pc.apps.simpletweets.R;
 import com.pc.apps.simpletweets.TwitterApplication;
 import com.pc.apps.simpletweets.Utilities.TwitterClient;
+import com.pc.apps.simpletweets.Utilities.Utils;
 import com.pc.apps.simpletweets.adapters.TweetsArrayAdapter;
 import com.pc.apps.simpletweets.fragments.HomeTimelineFragment;
 import com.pc.apps.simpletweets.fragments.MentionsTimelineFragment;
@@ -103,6 +104,10 @@ public class TimelineActivity extends ActionBarActivity implements ComposeTweetD
 
     }
     private void getLoggedInUser() {
+        if(!Utils.isNetworkAvailable(getApplicationContext())){
+            Toast.makeText(getApplicationContext(), "No network available!", Toast.LENGTH_SHORT).show();
+            return;
+        }
         client.getUserInfo(new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject json) {

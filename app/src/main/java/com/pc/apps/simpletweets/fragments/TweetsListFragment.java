@@ -17,6 +17,8 @@ import com.pc.apps.simpletweets.Utilities.Utils;
 import com.pc.apps.simpletweets.adapters.TweetsArrayAdapter;
 import com.pc.apps.simpletweets.models.Tweet;
 import android.util.Log;
+import android.widget.Toast;
+
 import org.apache.http.Header;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -94,6 +96,10 @@ public abstract class TweetsListFragment extends Fragment  {
     }
 
     public void populateTimeline(Tweet t){
+        if(!Utils.isNetworkAvailable(getActivity().getApplicationContext())){
+            Toast.makeText(getActivity().getApplicationContext(), "No network available!", Toast.LENGTH_SHORT).show();
+            return;
+        }
         //TODO: load from DB for different fragments
         /*if(!Utils.isNetworkAvailable(getActivity().getApplicationContext())){
             List<Tweet> tweets  = new Select().from(Tweet.class).execute();
